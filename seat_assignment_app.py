@@ -30,6 +30,7 @@ def get_table_data(seat_map):
                 row_data.append(seat_map[col][row])
             else:
                 row_data.append('')
+        # 공백 대신 "구분1", "구분2" 열을 채우는 방식으로 오류 방지
         table_data.append(row_data[:2] + [''] + row_data[2:4] + [''] + row_data[4:6])
 
     # 마지막 줄에 '교탁' 표시
@@ -39,7 +40,7 @@ def get_table_data(seat_map):
 # Streamlit 앱 설정
 st.set_page_config(page_title="자리 배치", layout="centered")
 
-# 상단 헤더와 버튼을 나란히 배치
+# 상단 제목 + 오른쪽 버튼 나란히 배치
 col1, col2 = st.columns([3, 1])
 with col1:
     st.title("🎓 9학년 2반 자리배치 랜덤배치")
@@ -55,12 +56,15 @@ students = [
 
 placeholder = st.empty()
 
-# 버튼이 클릭되면 자리 섞기 + 애니메이션
 if start:
-    for _ in range(15):  # 약 5초간 반복
+    for _ in range(15):  # 약 5초간 섞임
         seat_map = assign_seats(students.copy())
         table_data = get_table_data(seat_map)
-        df = pd.DataFrame(table_data, columns=["1열", "2열", "", "3열", "4열", "", "5열", "6열"])
+        df = pd.DataFrame(
+            table_data,
+            columns=["1열", "2열", "구분1", "3열", "4열", "구분2", "5열", "6열"]
+        )
         placeholder.dataframe(df, use_container_width=True)
         time.sleep(0.3)
+
     st.success("✅ 자리 배치 완료되었습니다! 다시 뽑고 싶으면 위 버튼을 누르세요.")
